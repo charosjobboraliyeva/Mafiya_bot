@@ -11,7 +11,7 @@ from aiohttp import web
 
 TOKEN = "8957940963:AAHujPxVzajKM4BAJGeBLfDKURuALPMqSzg"
 ADMIN_ID = 8797252107
-CHANNEL_USERNAME = "https://t.me/mafiya_game_team"
+CHANNEL_USERNAME = "@mafiya_game_team"
 
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=TOKEN)
