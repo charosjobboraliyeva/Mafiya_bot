@@ -471,14 +471,48 @@ async def search_pair_cb(call: types.CallbackQuery):
 
 @dp.message(F.chat.type == "private", F.text == "🎭 Rollar va Vazifalar")
 async def roles_info(message: types.Message):
-    roles_text = (
-        "🎭 **O'YIN ROLLARI VA ULarning VAZIFALARI:**\n\n"
+        roles_text = (
+        "🎭 **O‘YIN ROLLARI VA ULARNING VAZIFALARI:**\n\n"
+        "🔪 **Qotil** – Tunda o'z qurbonini yo'q qiladi.\n"
+        "👮 **Serjant** – Komissarga yordam beradi.\n"
+        "🎖 **Janob** – Maxsus imtiyozli shahar fuqarosi.\n"
+        "🦹 **Daydi** – Tunda ko'chalarni kezib yuradi.\n"
+        "👸 **Malika** – O'z jozibasi bilan tunda kimnidir band qiladi.\n"
+        "⚖️ **Advokat** – Mafiyani suddan himoya qiladi.\n"
+        "🕳 **Suidsid** – O'yinni o'ziga xos tarzda tark etadi.\n"
+        "🤞 **Omadli** – Ba'zida o'limdan qutulib qoladi.\n"
+        "🥷 **Yollanma qotil** – Buyurtma asosida ishlaydi.\n"
+        "💣 **Afsungar** – Tungi tilsimlar ishlatadi.\n"
+        "🃏 **Aferist** – O'yinchilarni chalg'itadi.\n"
+        "👺 **G'azabkor** – Kuchli hissiyotlar bilan harakat qiladi.\n"
+        "🧙 **Sehrgar** – Sirli kuchlarga ega.\n"
+        "💻 **Jurnalist** – Ma'lumot toplash uchun surishtiruv o'tkazadi.\n"
+        "🤓 **Sotqin** – O'z jamoasiga xiyonat qilishi mumkin.\n"
+        "🤡 **Joker** – Kutilmagan harakatlar qiladi.\n"
+        "👨‍✈️ **Admiral** – Shahar flotini boshqaradi.\n"
+        "🧪 **Kimyogar** – Turli dorilar va zaharlar tayyorlaydi.\n"
+        "💰 **Rais** – Shahar kengashida ovozi muhim.\n"
+        "☠️ **Minior** – Portlovchi moddalar bilan ishlaydi.\n"
+        "🏹 **Robin Gud** – Kambag'allarga yordam beradi.\n"
+        "🦇 **Ayg'oqchi** – Sirlarni poylaydi.\n"
+        "👷 **Konchi** – Yer osti sirlarini biladi.\n"
+        "📸 **Fotoparatchi** – Tungi voqealarni suratga oladi.\n"
+        "⚔️ **Qaroqchi** – Boyliklarni o'g'irlaydi.\n"
+        "👩‍⚕️ **Labarant / Hamshira** – Ilmiy tajribalar o'tkazadi va davolaydi.\n"
+        "⚡ **Koldun** – Qora afsungarlik qiladi.\n"
+        "🎅 **Qorbobo** – Yangi yil muhitini yaratadi.\n"
+        "🏬 **Savdodar** – Savdo-sotiq bilan shug'ullanadi.\n"
+        "🕊 **Diplomat** – Muzokaralar olib boradi.\n"
+        "👩‍💻 **Xakker** – Tizimlarni buzib kiradi.\n"
+        "🐉 **Gidra** – Boshini yo'qotmaydigan sirli mavjudot.\n"
+        "🤖 **Bosh Don / Transformer** – Mafiyani boshqaradi yoki rolini o'zgartiradi.\n"
         "❤️ **Oshiq** — sevgilisini tanlaydi, ulardan biri o'lsa ikkinchisi ham o'ladi.\n"
         "🛡 **Tansoqchi** — himoya qilgan o'yinchi o'rniga o'zi qurbon bo'ladi.\n"
         "🎭 **Josus** — kechasi bir o'yinchining rolini yashirin bilib oladi.\n"
         "🤡 **Masxaraboz** — ovoz berish orqali chiqarib yuborishsa, g'alaba qozonadi.\n"
-        "🧛 **Vampir** — har kecha bitta o'yinchini tishlaydi va maxsus mexanikaga ega.\n"
+        "🧛 **Vampir** — har kecha bitta o'yinchini tishlaydi va maxsus mexanikaga ega."
     )
+
     await message.answer(roles_text, parse_mode="Markdown")
 
 @dp.message(F.chat.type == "private", F.text == "📜 Mavsum haqida")
