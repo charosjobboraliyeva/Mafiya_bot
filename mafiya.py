@@ -812,9 +812,45 @@ async def run_game_loop(chat_id: int, message: types.Message):
                 except Exception:
                     pass
 
+                # Daydi va Malika uchun tungi tanlov tugmalarini yaratamiz
+        for uid, rname in roles.items():
+            if rname == "🦹 Daydi":
+                daydi_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        daydi_buttons.append([InlineKeyboardButton(text=f"🦹 {target_name}ni kuzatish", callback_data=f"daydi_{target_id}")])
+                
+                daydi_kb = InlineKeyboardMarkup(inline_keyboard=daydi_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "Siz Daydisiz! Kimni kuzatmoqchisiz?",
+                        reply_markup=daydi_kb
+                    )
+                except Exception:
+                    pass
+
+            elif rname == "👸 Malika":
+                malika_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        malika_buttons.append([InlineKeyboardButton(text=f"👸 {target_name}ni band qilish", callback_data=f"malika_{target_id}")])
+                
+                malika_kb = InlineKeyboardMarkup(inline_keyboard=malika_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "Siz Malikasiz! Kimni band qilmoqchisiz?",
+                        reply_markup=malika_kb
+                    )
+                except Exception:
+                    pass
+
                 # Serjant uchun tungi xabar
         for uid, rname in roles.items():
-            if rname == "👮 Serjant":
+            elif rname == "👮 Serjant":
                 try:
                     await bot.send_message(
                         uid,
@@ -826,7 +862,7 @@ async def run_game_loop(chat_id: int, message: types.Message):
 
                 # Janob uchun xabar
         for uid, rname in roles.items():
-            if rname == "🎖 Janob":
+            elif rname == "🎖 Janob":
                 try:
                     await bot.send_message(
                         uid,
@@ -961,6 +997,22 @@ async def janob_action_callback(call: types.CallbackQuery):
     # Janob o'z imtiyozini ishlatdi
     await call.message.edit_text("✅ Imtiyozingiz muvaffaqiyatli faollashtirildi!")
     await call.answer("Amaliyot bajarildi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("daydi_"))
+async def daydi_target_callback(call: types.CallbackQuery):
+    target_id = int(call.data.replace("daydi_", ""))
+    chat_id = call.message.chat.id
+    
+    await call.message.edit_text("✅ Tanlovingiz qabul qilindi. Kuzatuv natijasini tongda bilasiz...")
+    await call.answer("Daydi tanlovi qabul qilindi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("malika_"))
+async def malika_target_callback(call: types.CallbackQuery):
+    target_id = int(call.data.replace("malika_", ""))
+    chat_id = call.message.chat.id
+    
+    await call.message.edit_text("✅ Tanlovingiz qabul qilindi. O'yinchi band qilindi...")
+    await call.answer("Malika tanlovi qabul qilindi!", show_alert=True)
 
 # --- WEB SERVER ---
 async def handle(request):
