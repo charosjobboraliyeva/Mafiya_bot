@@ -1354,14 +1354,12 @@ async def run_game_loop(chat_id: int, message: types.Message):
                     )
                 except Exception:
                     pass
-        
-        # Hakker va Gidra uchun tungi tanlov tugmalari
-        for uid, rname in roles.items():
-            if rname == "💻 Hakker":
+
+                        elif rname == "💻 Hakker":
                 hakker_buttons = []
                 for target_id, target_name in game_lobbies[chat_id]["players"].items():
                     if target_id != uid:
-                        hakker_buttons.append([InlineKeyboardButton(text=f"💻 {target_name}ning telefonini buzish", callback_data=f"hakker_{target_id}")])
+                        hakker_buttons.append([InlineKeyboardButton(text=f"💻 {target_name}ning hamyonini hack qilish", callback_data=f"hakker_{target_id}")])
                 
                 hakker_kb = InlineKeyboardMarkup(inline_keyboard=hakker_buttons)
                 try:
@@ -1369,12 +1367,13 @@ async def run_game_loop(chat_id: int, message: types.Message):
                         uid,
                         "🌙 **Tun qorong'ulashdi...**\n\n"
                         "💻 **Siz Hakkersiz!**\n"
-                        "Siz raqamli dunyo ustasisiz. Tunda bir o'yinchining telefonini yoki qurilmasini buzib, uning kim bilan aloqa qilganini yoki xabarlarini o'qib chiqishingiz mumkin.\n"
-                        "Kimning ma'lumotlarini buzib kirmoqchisiz?",
+                        "Siz raqamli dunyo ustasisiz. Tunda xohlagan o'yinchingizning hisobiga kirib, uning pullarini o'g'irlashingiz mumkin.\n"
+                        "Kimning hamyonini shishirmoqchisiz (o'g'irlamoqchisiz)?",
                         reply_markup=hakker_kb
                     )
                 except Exception:
                     pass
+
 
             elif rname == "🐍 Gidra":
                 gidra_buttons = []
@@ -1770,13 +1769,32 @@ async def diplomat_target_callback(call: types.CallbackQuery):
 @dp.callback_query(F.data.startswith("hakker_"))
 async def hakker_target_callback(call: types.CallbackQuery):
     chat_id = call.message.chat.id
+    hakker_id = call.from_user.id
     target_id = int(call.data.replace("hakker_", ""))
     
-    # game_lobbies[chat_id]["night_actions"]["hakker"] = target_id
-    
-    await call.message.edit_text("✅ Tizimga muvaffaqiyatli kirildi. Ma'lumotlar yig'ilmoqda...")
-    await call.answer("Hakker tanlovi qabul qilindi!", show_alert=True)
+    # Tanlovni saqlab qo'yamiz
+    if chat_id in game_lobbies and "night_actions" in game_lobbies[chat_id]:
+        game_lobbies[chat_id]["night_actions"]["hakker"] = target_id
 
+    # Misol uchun pul o'g'irlash mantiqi (agar balans tizimi bo'lsa):
+    # O'yinchilarning balansi saqlanadigan lug'atni tekshiramiz
+    players_money = game_lobbies[chat_id].setdefault("players_money", {})
+    
+    # Targetda pul borligini tekshiramiz (masalan, 100 yoki undan ko'p bo'lsa)
+    target_balance = players_money.get(target_id, 100) # Standart 100 deb olamiz
+    
+    if target_balance >= 50:
+        stolen_amount = 50  # O'g'irlanadigan summa
+        players_money[target_id] = target_balance - stolen_amount
+        
+        hakker_balance = players_money.get(hakker_id, 100)
+        players_money[hakker_id] = hakker_balance + stolen_amount
+        
+        await call.message.edit_text(f"✅ Muvaffaqiyatli! O'yinchining hamyonidan **{stolen_amount} so'm** o'g'irlandi va sizning hisobingizga o'tkazildi.")
+    else:
+        await call.message.edit_text("⚠️ Afsus, bu o'yinchining hamyonida pul yo'q ekan.")
+        
+    await call.answer("Hakker tanlovi bajarildi!", show_alert=True)
 
 @dp.callback_query(F.data.startswith("gidra_"))
 async def gidra_target_callback(call: types.CallbackQuery):
