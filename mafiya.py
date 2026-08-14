@@ -774,6 +774,25 @@ async def run_game_loop(chat_id: int, message: types.Message):
         await bot.send_animation(chat_id, "https://media.giphy.com/media/26AHONQ79FdWZhAI0/giphy.gif", caption=night_caption, reply_markup=group_link_kb, parse_mode="Markdown")
         
         await asyncio.sleep(10)
+        # Qotil uchun tungi tanlov tugmalarini yaratamiz
+        for uid, rname in roles.items():
+            if rname == "🔪 Qotil":
+                # O'yindagi boshqa ishtirokchilarni qurbon sifatida tugma qilamiz
+                kill_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:  # O'zini o'zi o'ldira olmaydi
+                        kill_buttons.append([InlineKeyboardButton(text=f"🔪 {target_name}ni o'ldirish", callback_data=f"kill_{target_id}")])
+                
+                kill_kb = InlineKeyboardMarkup(inline_keyboard=kill_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "Siz Qotilsiz! Ushbu tunda kimning joniga qasd qilmoqchisiz? Quyidagilardan birini tanlang:",
+                        reply_markup=kill_kb
+                    )
+                except Exception:
+                    pass
 
         # 2. TONG VA KELISHILGAN VOQEALAR JARAYONI
         morning_caption = (
@@ -865,6 +884,14 @@ async def run_game_loop(chat_id: int, message: types.Message):
     except Exception as e:
         logging.error(f"O'yin jarayonida xatolik: {e}")
 
+@dp.callback_query(F.data.startswith("kill_"))
+async def kill_target_callback(call: types.CallbackQuery):
+    target_id = int(call.data.replace("kill_", ""))
+    chat_id = call.message.chat.id
+    
+    # Qotil o'z tanlovini qildi
+    await call.message.edit_text("✅ Sizning tanlovingiz qabul qilindi. Tong otishini kuting...")
+    await call.answer("Qurbon tanlandi!", show_alert=True)
 
 # --- WEB SERVER ---
 async def handle(request):
