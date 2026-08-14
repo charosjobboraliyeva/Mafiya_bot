@@ -686,7 +686,8 @@ async def start_game_process(message: types.Message):
         "🏹 Robin Gud", "🦇 Ayg'oqchi", "👷 Konchi", "📸 Fotoparatchi", "⚔️ Qaroqchi", 
         "👩‍⚕️ Labarant / Hamshira", "⚡ Koldun", "🎅 Qorbobo", "🏬 Savdodar", 
         "🕊 Diplomat", "👩‍💻 Xakker", "🐉 Gidra", "🤖 Bosh Don / Transformer", 
-        "❤️ Oshiq", "🛡 Tansoqchi", "🎭 Josus", "🤡 Masxaraboz", "🧛 Vampir"
+        "❤️ Oshiq", "🛡 Tansoqchi", "🎭 Josus", "🤡 Masxaraboz", "🧛 Vampir",
+        ​"📻 Radiotexnik", ​"💣 Saper", ​"🕳 Portalchi", ​"Mafiya: Qora Soya"
     ]
     
     roles = {}
