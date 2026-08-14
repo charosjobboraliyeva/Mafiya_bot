@@ -629,7 +629,19 @@ async def start_mafia_game(message: types.Message):
         return
     chat_id = message.chat.id
     game_lobbies[chat_id] = {"players": {}, "roles": {}, "status": "waiting"}
-    
+
+        # Har bir o'yinchiga o'z rolini shaxsiy xat orqali yuboramiz
+    for uid, rname in roles.items():
+        try:
+            await bot.send_message(
+                uid,
+                f"🎭 **Sizga rol taqsimlandi!**\n\n"
+                f"Sizning rolingiz: **{rname}**\n"
+                f"O'yin boshlandi, ko'rsatmalarni kuzatib boring!"
+            )
+        except Exception:
+            pass
+
     # Guruhda o'yin ochilganda chiqadigan xabarga botga o'tish tugmasi
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🎮 O'yinga qo'shilish", callback_data="join_mafia")],
