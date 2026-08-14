@@ -907,6 +907,41 @@ async def run_game_loop(chat_id: int, message: types.Message):
                 except Exception:
                     pass
 
+                # Omadli va Yollanma qotil uchun tungi tanlov tugmalarini yaratamiz
+        for uid, rname in roles.items():
+            if rname == "🤞 Omadli":
+                omadli_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    omadli_buttons.append([InlineKeyboardButton(text=f"🤞 {target_name}ni kuzatish", callback_data=f"omadli_{target_id}")])
+                
+                omadli_kb = InlineKeyboardMarkup(inline_keyboard=omadli_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "Siz Omadlisiz! O'z omadingizni sinab ko'ring.",
+                        reply_markup=omadli_kb
+                    )
+                except Exception:
+                    pass
+
+            elif rname == "🥷 Yollanma qotil":
+                yollanma_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        yollanma_buttons.append([InlineKeyboardButton(text=f"🎯 {target_name}ga nishonga olish", callback_data=f"yollanma_{target_id}")])
+                
+                yollanma_kb = InlineKeyboardMarkup(inline_keyboard=yollanma_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "Siz Yollanma qotilsiz! Tungi nishoningizni tanlang.",
+                        reply_markup=yollanma_kb
+                    )
+                except Exception:
+                    pass
+
         # 2. TONG VA KELISHILGAN VOQEALAR JARAYONI
         morning_caption = (
             "🚨 **SHOSHILINCH XABAR!**\n\n"
@@ -1065,6 +1100,23 @@ async def suidsid_target_callback(call: types.CallbackQuery):
     
     await call.message.edit_text("✅ Tanlovingiz qabul qilindi. Tun yakunini kuting...")
     await call.answer("Suisid tanlovi qabul qilindi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("omadli_"))
+async def omadli_target_callback(call: types.CallbackQuery):
+    target_id = int(call.data.replace("omadli_", ""))
+    chat_id = call.message.chat.id
+    
+    await call.message.edit_text("✅ Tanlovingiz qabul qilindi. Omad yor bo'lsin!")
+    await call.answer("Omadli tanlovi qabul qilindi!", show_alert=True)
+
+
+@dp.callback_query(F.data.startswith("yollanma_"))
+async def yollanma_target_callback(call: types.CallbackQuery):
+    target_id = int(call.data.replace("yollanma_", ""))
+    chat_id = call.message.chat.id
+    
+    await call.message.edit_text("✅ Tanlovingiz qabul qilindi. Nishon belgilandi...")
+    await call.answer("Yollanma qotil tanlovi qabul qilindi!", show_alert=True)
 
 # --- WEB SERVER ---
 async def handle(request):
