@@ -942,6 +942,40 @@ async def run_game_loop(chat_id: int, message: types.Message):
                 except Exception:
                     pass
 
+                    elif rname == "🃏 Aferist":
+                aferist_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        aferist_buttons.append([InlineKeyboardButton(text=f"🃏 {target_name}ni chuv tushirish", callback_data=f"aferist_{target_id}")])
+                
+                aferist_kb = InlineKeyboardMarkup(inline_keyboard=aferist_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "🃏 **Siz Aferistsiz!**\n"
+                        "Sizning vazifangiz — tanlagan o'yinchining tungi harakatini bloklash va ularni chuv tushirish.\n"
+                        "Kimni chuv tushirmoqchisiz?",
+                        reply_markup=aferist_kb
+                    )
+                except Exception:
+                    pass
+            
+            elif rname == "💣 Afsungar":
+                afsungar_buttons = []
+                # ... xuddi shu qolipda ...
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "💣 **Siz Afsungarsiz!**\n"
+                        "Siz o'z tilsimingiz bilan tanlagan o'yinchini afsunga solib, ularning rejasini buzishingiz mumkin.\n"
+                        "Kimga tilsim ishlatmoqchisiz?",
+                        reply_markup=afsungar_kb
+                    )
+                except Exception:
+                    pass
+
         # 2. TONG VA KELISHILGAN VOQEALAR JARAYONI
         morning_caption = (
             "🚨 **SHOSHILINCH XABAR!**\n\n"
@@ -1117,6 +1151,23 @@ async def yollanma_target_callback(call: types.CallbackQuery):
     
     await call.message.edit_text("✅ Tanlovingiz qabul qilindi. Nishon belgilandi...")
     await call.answer("Yollanma qotil tanlovi qabul qilindi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("afsungar_"))
+async def afsungar_target_callback(call: types.CallbackQuery):
+    target_id = int(call.data.replace("afsungar_", ""))
+    chat_id = call.message.chat.id
+    
+    await call.message.edit_text("✅ Tanlovingiz qabul qilindi. Tilsim ishlatildi...")
+    await call.answer("Afsungar tanlovi qabul qilindi!", show_alert=True)
+
+
+@dp.callback_query(F.data.startswith("aferist_"))
+async def aferist_target_callback(call: types.CallbackQuery):
+    target_id = int(call.data.replace("aferist_", ""))
+    chat_id = call.message.chat.id
+    
+    await call.message.edit_text("✅ Tanlovingiz qabul qilindi. Reja amalga oshmoqda...")
+    await call.answer("Aferist tanlovi qabul qilindi!", show_alert=True)
 
 # --- WEB SERVER ---
 async def handle(request):
