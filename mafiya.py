@@ -872,6 +872,41 @@ async def run_game_loop(chat_id: int, message: types.Message):
                 except Exception:
                     pass
 
+                # Advokat va Suisid uchun tungi tanlov tugmalarini yaratamiz
+        for uid, rname in roles.items():
+            if rname == "⚖️ Advokat":
+                advokat_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    advokat_buttons.append([InlineKeyboardButton(text=f"⚖️ {target_name}ni himoya qilish", callback_data=f"advokat_{target_id}")])
+                
+                advokat_kb = InlineKeyboardMarkup(inline_keyboard=advokat_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "Siz Advokatsiz! Kimni suddan himoya qilmoqchisiz?",
+                        reply_markup=advokat_kb
+                    )
+                except Exception:
+                    pass
+
+            elif rname == "🕳 Suidsid":
+                suidsid_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        suidsid_buttons.append([InlineKeyboardButton(text=f"🕳 {target_name} bilan ketish", callback_data=f"suidsid_{target_id}")])
+                
+                suidsid_kb = InlineKeyboardMarkup(inline_keyboard=suidsid_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "Siz Suisidsiz! Tunda kimni o'zingiz bilan tortmoqchisiz?",
+                        reply_markup=suidsid_kb
+                    )
+                except Exception:
+                    pass
+
         # 2. TONG VA KELISHILGAN VOQEALAR JARAYONI
         morning_caption = (
             "🚨 **SHOSHILINCH XABAR!**\n\n"
@@ -1013,6 +1048,23 @@ async def malika_target_callback(call: types.CallbackQuery):
     
     await call.message.edit_text("✅ Tanlovingiz qabul qilindi. O'yinchi band qilindi...")
     await call.answer("Malika tanlovi qabul qilindi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("advokat_"))
+async def advokat_target_callback(call: types.CallbackQuery):
+    target_id = int(call.data.replace("advokat_", ""))
+    chat_id = call.message.chat.id
+    
+    await call.message.edit_text("✅ Tanlovingiz qabul qilindi. Himoya ostiga olindi...")
+    await call.answer("Advokat tanlovi qabul qilindi!", show_alert=True)
+
+
+@dp.callback_query(F.data.startswith("suidsid_"))
+async def suidsid_target_callback(call: types.CallbackQuery):
+    target_id = int(call.data.replace("suidsid_", ""))
+    chat_id = call.message.chat.id
+    
+    await call.message.edit_text("✅ Tanlovingiz qabul qilindi. Tun yakunini kuting...")
+    await call.answer("Suisid tanlovi qabul qilindi!", show_alert=True)
 
 # --- WEB SERVER ---
 async def handle(request):
