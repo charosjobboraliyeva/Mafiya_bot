@@ -1415,6 +1415,58 @@ async def run_game_loop(chat_id: int, message: types.Message):
                 except Exception:
                     pass
 
+                # Radiotexnik, Saper va Portalchi uchun tungi tanlov tugmalari
+        for uid, rname in roles.items():
+            if rname == "📻 Radiotexnik":
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "📻 **Siz Radiotexniksiz!**\n"
+                        "Sizda maxsus aloqa vositasi bor. Tunda o'zingiz xohlagan matnni yozib qoldirsangiz, u tongda guruhdagilarga anonim tarzda yetkaziladi.\n"
+                        "*(Xabaringizni botga yozib yuborishingiz mumkin)*"
+                    )
+                except Exception:
+                    pass
+
+            elif rname == "💣 Saper":
+                saper_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        saper_buttons.append([InlineKeyboardButton(text=f"💣 {target_name}ning uyiga mina qo'yish", callback_data=f"saper_{target_id}")])
+                
+                saper_kb = InlineKeyboardMarkup(inline_keyboard=saper_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "💣 **Siz Sapersiz!**\n"
+                        "Siz portlovchi moddalar ustasisiz. Tunda bir o'yinchining uyiga yashirin mina o'rnatib, uning xavfsizligini xavf ostiga qo'yishingiz mumkin.\n"
+                        "Kimning uyiga mina o'rnatmoqchisiz?",
+                        reply_markup=saper_kb
+                    )
+                except Exception:
+                    pass
+
+            elif rname == "🕳 Portalchi":
+                portal_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        portal_buttons.append([InlineKeyboardButton(text=f"🕳 {target_name}ning manzilini almashtirish", callback_data=f"portal_{target_id}")])
+                
+                portal_kb = InlineKeyboardMarkup(inline_keyboard=portal_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "🕳 **Siz Portalchisiz!**\n"
+                        "Siz makonni egasiz. Tunda o'yinchilarning yo'llarini yoki manzillarini o'zaro almashtirib, ularni adashtirib yuborishingiz mumkin.\n"
+                        "Kimning manzilini o'zgartirmoqchisiz?",
+                        reply_markup=portal_kb
+                    )
+                except Exception:
+                    pass
+
         # 2. TONG VA KELISHILGAN VOQEALAR JARAYONI
         morning_caption = (
             "🚨 **SHOSHILINCH XABAR!**\n\n"
@@ -1836,6 +1888,27 @@ async def boshdon_target_callback(call: types.CallbackQuery):
     
     await call.message.edit_text("✅ Tanlovingiz qabul qilindi. Natijani tongda bilasiz...")
     await call.answer("Tanlov muvaffaqiyatli saqlandi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("saper_"))
+async def saper_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("saper_", ""))
+    
+    # game_lobbies[chat_id]["night_actions"]["saper"] = target_id
+    
+    await call.message.edit_text("✅ Mina muvaffaqiyatli o'rnatildi. Ehtiyot bo'lish kerak...")
+    await call.answer("Saper tanlovi qabul qilindi!", show_alert=True)
+
+
+@dp.callback_query(F.data.startswith("portal_"))
+async def portal_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("portal_", ""))
+    
+    # game_lobbies[chat_id]["night_actions"]["portal"] = target_id
+    
+    await call.message.edit_text("✅ Makon portal yordamida almashtirildi...")
+    await call.answer("Portalchi tanlovi qabul qilindi!", show_alert=True)
 
 # --- WEB SERVER ---
 async def handle(request):
