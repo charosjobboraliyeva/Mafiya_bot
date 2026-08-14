@@ -1056,6 +1056,46 @@ async def run_game_loop(chat_id: int, message: types.Message):
                 except Exception:
                     pass
 
+                # Joker va Admiral uchun tungi tanlov tugmalari
+        for uid, rname in roles.items():
+            if rname == "🃏 Joker":
+                joker_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        joker_buttons.append([InlineKeyboardButton(text=f"🃏 {target_name} ustidan kulish", callback_data=f"joker_{target_id}")])
+                
+                joker_kb = InlineKeyboardMarkup(inline_keyboard=joker_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "🃏 **Siz Jokersiz!**\n"
+                        "Sizning asosiy maqsadingiz — kunduzi hamma sizga qarshi ovoz berib, sizni o'yindan chiqarishiga erishish. Shunda siz g'alaba qozonasiz!\n"
+                        "Kimni o'zingizga qaratmoqchisiz?",
+                        reply_markup=joker_kb
+                    )
+                except Exception:
+                    pass
+
+            elif rname == "⚓ Admiral":
+                admiral_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        admiral_buttons.append([InlineKeyboardButton(text=f"⚓ {target_name}ni boshqarish", callback_data=f"admiral_{target_id}")])
+                
+                admiral_kb = InlineKeyboardMarkup(inline_keyboard=admiral_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "⚓ **Siz Admiralsiz!**\n"
+                        "Siz flot va jamoa harakatlarini o'z qo'lingizga olasiz. Tanlagan o'yinchingizning qayerga ovoz berishini yoki harakat qilishini yo'naltirishingiz mumkin.\n"
+                        "Kimni yo'naltirmoqchisiz?",
+                        reply_markup=admiral_kb
+                    )
+                except Exception:
+                    pass
+
         # 2. TONG VA KELISHILGAN VOQEALAR JARAYONI
         morning_caption = (
             "🚨 **SHOSHILINCH XABAR!**\n\n"
@@ -1273,7 +1313,19 @@ async def sotqin_target_callback(call: types.CallbackQuery):
     target_id = int(call.data.replace("sotqin_", ""))
     await call.message.edit_text("✅ Xiyonat rejasi qabul qilindi. O'yinni tomosha qiling...")
     await call.answer("Sotqin tanlovi qabul qilindi!", show_alert=True)
-q
+
+@dp.callback_query(F.data.startswith("joker_"))
+async def joker_target_callback(call: types.CallbackQuery):
+    target_id = int(call.data.replace("joker_", ""))
+    await call.message.edit_text("✅ Joker o'yini boshlandi. Ularni shubhalantiring...")
+    await call.answer("Joker tanlovi qabul qilindi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("admiral_"))
+async def admiral_target_callback(call: types.CallbackQuery):
+    target_id = int(call.data.replace("admiral_", ""))
+    await call.message.edit_text("✅ Admiral buyrug'i qabul qilindi.")
+    await call.answer("Admiral tanlovi qabul qilindi!", show_alert=True)
+
 # --- WEB SERVER ---
 async def handle(request):
     return web.Response(text="Mafia Bot Web Server is running successfully!")
