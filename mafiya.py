@@ -1292,18 +1292,24 @@ async def aferist_target_callback(call: types.CallbackQuery):
 @dp.callback_query(F.data.startswith("gazabkor_"))
 async def gazabkor_target_callback(call: types.CallbackQuery):
     target_id = int(call.data.replace("gazabkor_", ""))
+    chat_id = call.message.chat.id
+    
     await call.message.edit_text("✅ G'azabingiz yo'naltirildi. O'yinchi buni his qiladi...")
     await call.answer("G'azabkor tanlovi qabul qilindi!", show_alert=True)
 
 @dp.callback_query(F.data.startswith("sehrgar_"))
 async def sehrgar_target_callback(call: types.CallbackQuery):
     target_id = int(call.data.replace("sehrgar_", ""))
+    chat_id = call.message.chat.id
+    
     await call.message.edit_text("✅ Sehr ishlatildi. Natijani tongda bilasiz...")
     await call.answer("Sehrgar tanlovi qabul qilindi!", show_alert=True)
 
 @dp.callback_query(F.data.startswith("jurnalist_"))
 async def jurnalist_target_callback(call: types.CallbackQuery):
     target_id = int(call.data.replace("jurnalist_", ""))
+    chat_id = call.message.chat.id
+    
     # Bu yerda target_id ning rolini Jurnalistga xabar qiluvchi mantiq bo'ladi
     await call.message.edit_text("✅ Ma'lumot to'plandi. Tongda qaysi rol ekanligini bilasiz!")
     await call.answer("Jurnalist tanlovi qabul qilindi!", show_alert=True)
@@ -1311,20 +1317,42 @@ async def jurnalist_target_callback(call: types.CallbackQuery):
 @dp.callback_query(F.data.startswith("sotqin_"))
 async def sotqin_target_callback(call: types.CallbackQuery):
     target_id = int(call.data.replace("sotqin_", ""))
+    chat_id = call.message.chat.id
+    
     await call.message.edit_text("✅ Xiyonat rejasi qabul qilindi. O'yinni tomosha qiling...")
     await call.answer("Sotqin tanlovi qabul qilindi!", show_alert=True)
 
 @dp.callback_query(F.data.startswith("joker_"))
 async def joker_target_callback(call: types.CallbackQuery):
     target_id = int(call.data.replace("joker_", ""))
+    chat_id = call.message.chat.id
+    
     await call.message.edit_text("✅ Joker o'yini boshlandi. Ularni shubhalantiring...")
     await call.answer("Joker tanlovi qabul qilindi!", show_alert=True)
 
 @dp.callback_query(F.data.startswith("admiral_"))
 async def admiral_target_callback(call: types.CallbackQuery):
     target_id = int(call.data.replace("admiral_", ""))
+    chat_id = call.message.chat.id
+    
     await call.message.edit_text("✅ Admiral buyrug'i qabul qilindi.")
     await call.answer("Admiral tanlovi qabul qilindi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("kimyogar_"))
+async def kimyogar_target_callback(call: types.CallbackQuery):
+    target_id = int(call.data.replace("kimyogar_", ""))
+    chat_id = call.message.chat.id
+    
+    await call.message.edit_text("✅ Zaharli aralashma tayyorlandi va yuborildi...")
+    await call.answer("Kimyogar tanlovi qabul qilindi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("rais_"))
+async def rais_target_callback(call: types.CallbackQuery):
+    target_id = int(call.data.replace("rais_", ""))
+    chat_id = call.message.chat.id
+    
+    await call.message.edit_text("✅ Raisning qarori qabul qilindi. Ovozlar hisobga olinadi...")
+    await call.answer("Rais tanlovi qabul qilindi!", show_alert=True)
 
 # --- WEB SERVER ---
 async def handle(request):
