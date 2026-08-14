@@ -1195,6 +1195,46 @@ async def run_game_loop(chat_id: int, message: types.Message):
                 except Exception:
                     pass
 
+                # Konchi va Fitoparatchi uchun tungi tanlov tugmalari
+        for uid, rname in roles.items():
+            if rname == "⛏ Konchi":
+                konchi_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        konchi_buttons.append([InlineKeyboardButton(text=f"⛏ {target_name}ning uyini kovlash", callback_data=f"konchi_{target_id}")])
+                
+                konchi_kb = InlineKeyboardMarkup(inline_keyboard=konchi_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "⛏ **Siz Konchisiz!**\n"
+                        "Siz yer osti sirlarini va yashirin yo'llarni yaxshi bilasiz. Tunda biror o'yinchining uyiga yo'l kovlab, uning ashyolarini tekshirishingiz mumkin.\n"
+                        "Kimning uyini kovlamoqchisiz?",
+                        reply_markup=konchi_kb
+                    )
+                except Exception:
+                    pass
+
+            elif rname == "🌿 Fitoparatchi":
+                fitoparatchi_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        fitoparatchi_buttons.append([InlineKeyboardButton(text=f"🌿 {target_name}ga damlama tayyorlash", callback_data=f"fitoparatchi_{target_id}")])
+                
+                fitoparatchi_kb = InlineKeyboardMarkup(inline_keyboard=fitoparatchi_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "🌿 **Siz Fitoparatchisz!**\n"
+                        "Siz o'simliklar va shifobaxsh giyohlar ustasi ekansiz. Tunda kimnidir maxsus damlama bilan davolashingiz yoki uning kuchini tiklashingiz mumkin.\n"
+                        "Kimga damlama bermoqchisiz?",
+                        reply_markup=fitoparatchi_kb
+                    )
+                except Exception:
+                    pass
+
         # 2. TONG VA KELISHILGAN VOQEALAR JARAYONI
         morning_caption = (
             "🚨 **SHOSHILINCH XABAR!**\n\n"
@@ -1483,6 +1523,26 @@ async def aygoqchi_target_callback(call: types.CallbackQuery):
     
     await call.message.edit_text("✅ Josuslik ma'lumotlari yig'ilmoqda. Natijani tongda bilasiz...")
     await call.answer("Ayg'oqchi tanlovi qabul qilindi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("konchi_"))
+async def konchi_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("konchi_", ""))
+    
+    # game_lobbies[chat_id]["night_actions"]["konchi"] = target_id
+    
+    await call.message.edit_text("✅ Yer ostidan yo'l ochildi. Natijani tongda bilasiz...")
+    await call.answer("Konchi tanlovi qabul qilindi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("fitoparatchi_"))
+async def fitoparatchi_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("fitoparatchi_", ""))
+    
+    # game_lobbies[chat_id]["night_actions"]["fitoparatchi"] = target_id
+    
+    await call.message.edit_text("✅ Shifobaxsh damlama tayyorlandi va yuborildi...")
+    await call.answer("Fitoparatchi tanlovi qabul qilindi!", show_alert=True)
 
 # --- WEB SERVER ---
 async def handle(request):
