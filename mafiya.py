@@ -1489,6 +1489,103 @@ async def run_game_loop(chat_id: int, message: types.Message):
                 except Exception:
                     pass
 
+                # Oshiq, Tansoqchi, Josus, Masxaraboz va Vampir uchun tungi tanlov tugmalari
+        for uid, rname in roles.items():
+            if rname == "❤️ Oshiq":
+                oshiq_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        oshiq_buttons.append([InlineKeyboardButton(text=f"❤️ {target_name}ga ko'ngil qo'yish", callback_data=f"oshiq_{target_id}")])
+                
+                oshiq_kb = InlineKeyboardMarkup(inline_keyboard=oshiq_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "❤️ **Siz Oshiqsiz!**\n"
+                        "Siz qalb amriga bo'ysunasiz. Tunda bir o'yinchini tanlab, unga bir umrlik bog'lanishingiz mumkin (agar u o'lsa, siz ham birga ketasiz).\n"
+                        "Kimga ko'ngil qo'ymoqchisiz?",
+                        reply_markup=oshiq_kb
+                    )
+                except Exception:
+                    pass
+
+            elif rname == "🛡 Tansoqchi":
+                tansoqchi_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        tansoqchi_buttons.append([InlineKeyboardButton(text=f"🛡 {target_name}ni qo'riqlash", callback_data=f"tansoqchi_{target_id}")])
+                
+                tansoqchi_kb = InlineKeyboardMarkup(inline_keyboard=tansoqchi_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "🛡 **Siz Tansoqchisiz!**\n"
+                        "Sizning vazifangiz shaxsni himoya qilish. Tunda bir o'yinchining uyini poylab, unga qilingan hujumlardan asrab qolishingiz mumkin.\n"
+                        "Kimni qo'riqlamoqchisiz?",
+                        reply_markup=tansoqchi_kb
+                    )
+                except Exception:
+                    pass
+
+            elif rname == "🎭 Josus":
+                josus_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        josus_buttons.append([InlineKeyboardButton(text=f"🎭 {target_name}ni poylash", callback_data=f"josus_{target_id}")])
+                
+                josus_kb = InlineKeyboardMarkup(inline_keyboard=josus_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "🎭 **Siz Josuszsiz!**\n"
+                        "Siz maxfiy ma'lumotlar yig'asiz. Tunda bir o'yinchining ortidan poylab, u kechasi kim bilan muloqot qilganini bilib olishingiz mumkin.\n"
+                        "Kimni poylamoqchisiz?",
+                        reply_markup=josus_kb
+                    )
+                except Exception:
+                    pass
+
+            elif rname == "🤡 Masxaraboz":
+                masxara_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        masxara_buttons.append([InlineKeyboardButton(text=f"🤡 {target_name}ni chalg'itish", callback_data=f"masxaraboz_{target_id}")])
+                
+                masxara_kb = InlineKeyboardMarkup(inline_keyboard=masxara_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "🤡 **Siz Masxarabozsiz!**\n"
+                        "Siz odamlarni kuldirib, rejalarni buzish ustasisiz. Tunda bir o'yinchining kayfiyatini ko'tarib, uning tungi harakatini bekor qilib qo'yishingiz mumkin.\n"
+                        "Kimni chalg'itmoqchisiz?",
+                        reply_markup=masxara_kb
+                    )
+                except Exception:
+                    pass
+
+            elif rname == "🧛 Vampir":
+                vampir_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        vampir_buttons.append([InlineKeyboardButton(text=f"🧛 {target_name}ga tish solish", callback_data=f"vampir_{target_id}")])
+                
+                vampir_kb = InlineKeyboardMarkup(inline_keyboard=vampir_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "🧛 **Siz Vampirsiz!**\n"
+                        "Siz qorong'ulik hukmdorisiz. Tunda nishonni tanlab, uning qonini ichishingiz va uni asta-sekin o'zingizga bo'ysundirishingiz mumkin.\n"
+                        "Kimga hujum qilmoqchisiz?",
+                        reply_markup=vampir_kb
+                    )
+                except Exception:
+                    pass
+
         # 2. TONG VA KELISHILGAN VOQEALAR JARAYONI
         morning_caption = (
             "🚨 **SHOSHILINCH XABAR!**\n\n"
@@ -1941,6 +2038,50 @@ async def mafiya_target_callback(call: types.CallbackQuery):
     
     await call.message.edit_text("✅ Nishon belgilandi. 'Mafiya: Qora Soya' o'z ishini bajarmoqda...")
     await call.answer("Mafiya tanlovi qabul qilindi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("oshiq_"))
+async def oshiq_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("oshiq_", ""))
+    # game_lobbies[chat_id]["night_actions"]["oshiq"] = target_id
+    await call.message.edit_text("✅ Yurak tanlovi muvaffaqiyatli amalga oshirildi...")
+    await call.answer("Oshiq tanlovi qabul qilindi!", show_alert=True)
+
+
+@dp.callback_query(F.data.startswith("tansoqchi_"))
+async def tansoqchi_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("tansoqchi_", ""))
+    # game_lobbies[chat_id]["night_actions"]["tansoqchi"] = target_id
+    await call.message.edit_text("✅ Himoya posti egallandi...")
+    await call.answer("Tansoqchi tanlovi qabul qilindi!", show_alert=True)
+
+
+@dp.callback_query(F.data.startswith("josus_"))
+async def josus_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("josus_", ""))
+    # game_lobbies[chat_id]["night_actions"]["josus"] = target_id
+    await call.message.edit_text("✅ Kuzatuv boshlandi...")
+    await call.answer("Josus tanlovi qabul qilindi!", show_alert=True)
+
+
+@dp.callback_query(F.data.startswith("masxaraboz_"))
+async def masxaraboz_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("masxaraboz_", ""))
+    # game_lobbies[chat_id]["night_actions"]["masxaraboz"] = target_id
+    await call.message.edit_text("✅ O'yinchoq va hazirlar ishga tushdi...")
+    await call.answer("Masxaraboz tanlovi qabul qilindi!", show_alert=True)
+
+
+@dp.callback_query(F.data.startswith("vampir_"))
+async def vampir_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("vampir_", ""))
+    # game_lobbies[chat_id]["night_actions"]["vampir"] = target_id
+    await call.message.edit_text("✅ Tungi ov boshlandi...")
+    await call.answer("Vampir tanlovi qabul qilindi!", show_alert=True)
 
 # --- WEB SERVER ---
 async def handle(request):
