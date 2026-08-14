@@ -976,6 +976,46 @@ async def run_game_loop(chat_id: int, message: types.Message):
                 except Exception:
                     pass
 
+                # G'azabkor va Sehrgar uchun tungi tanlov tugmalari
+        for uid, rname in roles.items():
+            if rname == "👺 G'azabkor":
+                gazabkor_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        gazabkor_buttons.append([InlineKeyboardButton(text=f"👺 {target_name}ga g'azab qilish", callback_data=f"gazabkor_{target_id}")])
+                
+                gazabkor_kb = InlineKeyboardMarkup(inline_keyboard=gazabkor_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "👺 **Siz G'azabkorsiz!**\n"
+                        "Sizning g'azabingiz juda kuchli. Tanlagan o'yinchining tinchini buzishingiz mumkin.\n"
+                        "Kimni g'azablantirmoqchisiz?",
+                        reply_markup=gazabkor_kb
+                    )
+                except Exception:
+                    pass
+
+            elif rname == "🧙 Sehrgar":
+                sehrgar_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        sehrgar_buttons.append([InlineKeyboardButton(text=f"🧙 {target_name}ga sehr ishlatish", callback_data=f"sehrgar_{target_id}")])
+                
+                sehrgar_kb = InlineKeyboardMarkup(inline_keyboard=sehrgar_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "🧙 **Siz Sehrgarsiz!**\n"
+                        "Siz sehr yordamida o'yinchilarning taqdirini o'zgartira olasiz.\n"
+                        "Kimga sehr ishlatmoqchisiz?",
+                        reply_markup=sehrgar_kb
+                    )
+                except Exception:
+                    pass
+
         # 2. TONG VA KELISHILGAN VOQEALAR JARAYONI
         morning_caption = (
             "🚨 **SHOSHILINCH XABAR!**\n\n"
@@ -1168,6 +1208,18 @@ async def aferist_target_callback(call: types.CallbackQuery):
     
     await call.message.edit_text("✅ Tanlovingiz qabul qilindi. Reja amalga oshmoqda...")
     await call.answer("Aferist tanlovi qabul qilindi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("gazabkor_"))
+async def gazabkor_target_callback(call: types.CallbackQuery):
+    target_id = int(call.data.replace("gazabkor_", ""))
+    await call.message.edit_text("✅ G'azabingiz yo'naltirildi. O'yinchi buni his qiladi...")
+    await call.answer("G'azabkor tanlovi qabul qilindi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("sehrgar_"))
+async def sehrgar_target_callback(call: types.CallbackQuery):
+    target_id = int(call.data.replace("sehrgar_", ""))
+    await call.message.edit_text("✅ Sehr ishlatildi. Natijani tongda bilasiz...")
+    await call.answer("Sehrgar tanlovi qabul qilindi!", show_alert=True)
 
 # --- WEB SERVER ---
 async def handle(request):
