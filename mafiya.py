@@ -1235,6 +1235,86 @@ async def run_game_loop(chat_id: int, message: types.Message):
                 except Exception:
                     pass
 
+                # Qaroqchi va Laborant uchun tungi tanlov tugmalari
+        for uid, rname in roles.items():
+            if rname == "🏴‍☠️ Qaroqchi":
+                qaroqchi_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        qaroqchi_buttons.append([InlineKeyboardButton(text=f"🏴‍☠️ {target_name}ga hujum qilish", callback_data=f"qaroqchi_{target_id}")])
+                
+                qaroqchi_kb = InlineKeyboardMarkup(inline_keyboard=qaroqchi_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "🏴‍☠️ **Siz Qaroqchisiz!**\n"
+                        "Siz shafqatsiz qaroqchisiz. Tunda biror o'yinchining uyiga bostirib kirib, uning tinchini buzishingiz yoki unga hujum qilishingiz mumkin.\n"
+                        "Kimni nishonga olmoqchisiz?",
+                        reply_markup=qaroqchi_kb
+                    )
+                except Exception:
+                    pass
+
+            elif rname == "🔬 Laborant":
+                laborant_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        laborant_buttons.append([InlineKeyboardButton(text=f"🔬 {target_name}ni tekshirish/tahlil qilish", callback_data=f"laborant_{target_id}")])
+                
+                laborant_kb = InlineKeyboardMarkup(inline_keyboard=laborant_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "🔬 **Siz Laborantsiz!**\n"
+                        "Siz laboratoriyada ilmiy tahlillar olib borasiz. Tunda bir o'yinchining tahlilini olib, uning kasallangan yoki zaharlanganini aniqlashingiz mumkin.\n"
+                        "Kimni tekshirmoqchisiz?",
+                        reply_markup=laborant_kb
+                    )
+                except Exception:
+                    pass
+      
+        # Koldun va Qorbobobo uchun tungi tanlov tugmalari
+        for uid, rname in roles.items():
+            if rname == "🧙‍♂️ Koldun":
+                koldun_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        koldun_buttons.append([InlineKeyboardButton(text=f"🧙‍♂️ {target_name}ga qora jo'dom o'qish", callback_data=f"koldun_{target_id}")])
+                
+                koldun_kb = InlineKeyboardMarkup(inline_keyboard=koldun_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "🧙‍♂️ **Siz Koldunsiz!**\n"
+                        "Siz qora jodular egasisiz. Tunda bir o'yinchiga afsungar qilib, uning qobiliyatini o'chirib qo'yishingiz yoki unga zarar yetkazishingiz mumkin.\n"
+                        "Kimga jodugarlik qilmoqchisiz?",
+                        reply_markup=koldun_kb
+                    )
+                except Exception:
+                    pass
+
+            elif rname == "🎅 Qorbobobo":
+                qorbobobo_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        qorbobobo_buttons.append([InlineKeyboardButton(text=f"🎅 {target_name}ga qor sovg'a qilish", callback_data=f"qorbobobo_{target_id}")])
+                
+                qorbobobo_kb = InlineKeyboardMarkup(inline_keyboard=qorbobobo_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "🎅 **Siz Qorbobobosiz!**\n"
+                        "Siz sehrli qish nafasi bilan yashaysiz. Tunda tanlagan o'yinchisining uyini muzlatib, uni har qanday tungi hujumlardan himoya qila olasiz.\n"
+                        "Kimni muzlatib asramoqchisiz?",
+                        reply_markup=qorbobobo_kb
+                    )
+                except Exception:
+                    pass
+
         # 2. TONG VA KELISHILGAN VOQEALAR JARAYONI
         morning_caption = (
             "🚨 **SHOSHILINCH XABAR!**\n\n"
@@ -1543,6 +1623,48 @@ async def fitoparatchi_target_callback(call: types.CallbackQuery):
     
     await call.message.edit_text("✅ Shifobaxsh damlama tayyorlandi va yuborildi...")
     await call.answer("Fitoparatchi tanlovi qabul qilindi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("qaroqchi_"))
+async def qaroqchi_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("qaroqchi_", ""))
+    
+    # game_lobbies[chat_id]["night_actions"]["qaroqchi"] = target_id
+    
+    await call.message.edit_text("✅ Qaroqchi hujjati va hujumi yo'naltirildi...")
+    await call.answer("Qaroqchi tanlovi qabul qilindi!", show_alert=True)
+
+
+@dp.callback_query(F.data.startswith("laborant_"))
+async def laborant_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("laborant_", ""))
+    
+    # game_lobbies[chat_id]["night_actions"]["laborant"] = target_id
+    
+    await call.message.edit_text("✅ Ilmiy tahlil natijasi tongda ma'lum qilinadi...")
+    await call.answer("Laborant tanlovi qabul qilindi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("koldun_"))
+async def koldun_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("koldun_", ""))
+    
+    # game_lobbies[chat_id]["night_actions"]["koldun"] = target_id
+    
+    await call.message.edit_text("✅ Qora jodungiz o'z ta'sirini ko'rsatmoqda...")
+    await call.answer("Koldun tanlovi qabul qilindi!", show_alert=True)
+
+
+@dp.callback_query(F.data.startswith("qorbobobo_"))
+async def qorbobobo_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("qorbobobo_", ""))
+    
+    # game_lobbies[chat_id]["night_actions"]["qorbobobo"] = target_id
+    
+    await call.message.edit_text("✅ Sehrli qish qalqoni o'rnatildi...")
+    await call.answer("Qorbobobo tanlovi qabul qilindi!", show_alert=True)
 
 # --- WEB SERVER ---
 async def handle(request):
