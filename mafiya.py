@@ -1096,6 +1096,46 @@ async def run_game_loop(chat_id: int, message: types.Message):
                 except Exception:
                     pass
 
+                # Kimyogar va Rais uchun tungi tanlov tugmalari
+        for uid, rname in roles.items():
+            if rname == "🧪 Kimyogar":
+                kimyogar_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        kimyogar_buttons.append([InlineKeyboardButton(text=f"🧪 {target_name}ga zahar tayyorlash", callback_data=f"kimyogar_{target_id}")])
+                
+                kimyogar_kb = InlineKeyboardMarkup(inline_keyboard=kimyogar_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "🧪 **Siz Kimyogarsiz!**\n"
+                        "Siz tanlagan o'yinchiga zaharli aralashma yuborishingiz mumkin. U ertasi kuni tunda yoki kunduzi o'z kuchini yo'qotadi.\n"
+                        "Kimni zaharamoqchisiz?",
+                        reply_markup=kimyogar_kb
+                    )
+                except Exception:
+                    pass
+
+            elif rname == "🏛 Rais":
+                rais_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        rais_buttons.append([InlineKeyboardButton(text=f"🏛 {target_name}ni nazorat qilish", callback_data=f"rais_{target_id}")])
+                
+                rais_kb = InlineKeyboardMarkup(inline_keyboard=rais_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "🏛 **Siz Raisiz!**\n"
+                        "Siz shahar kengashi rahbarisiz. Siz tanlagan o'yinchining ovozi kunduzi 2 ta hisoblanadi yoki bekor qilinadi.\n"
+                        "Kimni tanlamoqchisiz?",
+                        reply_markup=rais_kb
+                    )
+                except Exception:
+                    pass
+
         # 2. TONG VA KELISHILGAN VOQEALAR JARAYONI
         morning_caption = (
             "🚨 **SHOSHILINCH XABAR!**\n\n"
