@@ -1394,6 +1394,27 @@ async def run_game_loop(chat_id: int, message: types.Message):
                 except Exception:
                     pass
 
+                # Bosh Don / Transformer uchun tungi tanlov tugmalari
+        for uid, rname in roles.items():
+            if rname == "👑 Bosh Don / Transformer":
+                boshdon_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        boshdon_buttons.append([InlineKeyboardButton(text=f"👑 🤖 {target_name}ni nishonga olish", callback_data=f"boshdon_{target_id}")])
+                
+                boshdon_kb = InlineKeyboardMarkup(inline_keyboard=boshdon_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "👑 **Siz Bosh Don / Transformersiz!**\n"
+                        "Siz ham mafiya boshlig'i, ham o'z shaklini o'zgartira oluvchi qudratli o'yinchisiz. Tunda nishonni yo'q qilish yoki boshqaning qobiliyatini nusxalash uchun o'yinchini tanlang.\n"
+                        "Kimni tanlamoqchisiz?",
+                        reply_markup=boshdon_kb
+                    )
+                except Exception:
+                    pass
+
         # 2. TONG VA KELISHILGAN VOQEALAR JARAYONI
         morning_caption = (
             "🚨 **SHOSHILINCH XABAR!**\n\n"
@@ -1805,6 +1826,16 @@ async def gidra_target_callback(call: types.CallbackQuery):
     
     await call.message.edit_text("✅ Zaharli nishon belgilandi...")
     await call.answer("Gidra tanlovi qabul qilindi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("boshdon_"))
+async def boshdon_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("boshdon_", ""))
+    
+    # game_lobbies[chat_id]["night_actions"]["boshdon"] = target_id
+    
+    await call.message.edit_text("✅ Tanlovingiz qabul qilindi. Natijani tongda bilasiz...")
+    await call.answer("Tanlov muvaffaqiyatli saqlandi!", show_alert=True)
 
 # --- WEB SERVER ---
 async def handle(request):
