@@ -1176,6 +1176,25 @@ async def run_game_loop(chat_id: int, message: types.Message):
                 except Exception:
                     pass
 
+                    elif rname == "🕵️‍♂️ Ayg'oqchi":
+                aygoqchi_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        aygoqchi_buttons.append([InlineKeyboardButton(text=f"🕵️‍♂️ {target_name}ni poylab josuslik qilish", callback_data=f"aygoqchi_{target_id}")])
+                
+                aygoqchi_kb = InlineKeyboardMarkup(inline_keyboard=aygoqchi_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "🕵️‍♂️ **Siz Ayg'oqchisiz!**\n"
+                        "Sizning vazifangiz — tunda yashirincha bir o'yinchining ortidan poylab, uning kim bilan uchrashganini yoki nima ish qilganini bilib olish.\n"
+                        "Kimni poylamoqchisiz?",
+                        reply_markup=aygoqchi_kb
+                    )
+                except Exception:
+                    pass
+
         # 2. TONG VA KELISHILGAN VOQEALAR JARAYONI
         morning_caption = (
             "🚨 **SHOSHILINCH XABAR!**\n\n"
@@ -1455,6 +1474,15 @@ async def robin_target_callback(call: types.CallbackQuery):
     await call.message.edit_text("✅ O'q tayyorlandi va nishonga qaratildi...")
     await call.answer("Robin Gud tanlovi qabul qilindi!", show_alert=True)
 
+@dp.callback_query(F.data.startswith("aygoqchi_"))
+async def aygoqchi_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("aygoqchi_", ""))
+    
+    # game_lobbies[chat_id]["night_actions"]["aygoqchi"] = target_id
+    
+    await call.message.edit_text("✅ Josuslik ma'lumotlari yig'ilmoqda. Natijani tongda bilasiz...")
+    await call.answer("Ayg'oqchi tanlovi qabul qilindi!", show_alert=True)
 
 # --- WEB SERVER ---
 async def handle(request):
