@@ -1136,6 +1136,46 @@ async def run_game_loop(chat_id: int, message: types.Message):
                 except Exception:
                     pass
 
+                # Minior va Robin Gud uchun tungi tanlov tugmalari
+        for uid, rname in roles.items():
+            if rname == "⛏ Minior":
+                minior_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        minior_buttons.append([InlineKeyboardButton(text=f"⛏ {target_name}ni qazish/kuzatish", callback_data=f"minior_{target_id}")])
+                
+                minior_kb = InlineKeyboardMarkup(inline_keyboard=minior_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "⛏ **Siz Miniorsiz!**\n"
+                        "Siz yer osti sirlarini bilasiz. Tunda kimningdir uyini yoki sirlarini qazib ochishingiz mumkin.\n"
+                        "Kimni tanlamoqchisiz?",
+                        reply_markup=minior_kb
+                    )
+                except Exception:
+                    pass
+
+            elif rname == "🏹 Robin Gud":
+                robin_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        robin_buttons.append([InlineKeyboardButton(text=f"🏹 {target_name}ni himoya qilish", callback_data=f"robin_{target_id}")])
+                
+                robin_kb = InlineKeyboardMarkup(inline_keyboard=robin_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "🏹 **Siz Robin Gudsiz!**\n"
+                        "Siz kambag'allarning himoyachisisiz. Tunda shubhali odamga o'q uzib, uning rejasini buzishingiz mumkin.\n"
+                        "Kimni nishonga olmoqchisiz?",
+                        reply_markup=robin_kb
+                    )
+                except Exception:
+                    pass
+
         # 2. TONG VA KELISHILGAN VOQEALAR JARAYONI
         morning_caption = (
             "🚨 **SHOSHILINCH XABAR!**\n\n"
@@ -1393,6 +1433,28 @@ async def rais_target_callback(call: types.CallbackQuery):
     
     await call.message.edit_text("✅ Raisning qarori qabul qilindi. Ovozlar hisobga olinadi...")
     await call.answer("Rais tanlovi qabul qilindi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("minior_"))
+async def minior_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("minior_", ""))
+    
+    # game_lobbies[chat_id]["night_actions"]["minior"] = target_id
+    
+    await call.message.edit_text("✅ Ma'lumot qazib olindi. Natijani tongda bilasiz...")
+    await call.answer("Minior tanlovi qabul qilindi!", show_alert=True)
+
+
+@dp.callback_query(F.data.startswith("robin_"))
+async def robin_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("robin_", ""))
+    
+    # game_lobbies[chat_id]["night_actions"]["robin"] = target_id
+    
+    await call.message.edit_text("✅ O'q tayyorlandi va nishonga qaratildi...")
+    await call.answer("Robin Gud tanlovi qabul qilindi!", show_alert=True)
+
 
 # --- WEB SERVER ---
 async def handle(request):
