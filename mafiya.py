@@ -945,6 +945,22 @@ async def heal_target_callback(call: types.CallbackQuery):
     await call.answer("Bemor tanlandi!", show_alert=True)
 
 
+@dp.callback_query(F.data.startswith("sergeant_"))
+async def sergeant_target_callback(call: types.CallbackQuery):
+    target_id = int(call.data.replace("sergeant_", ""))
+    chat_id = call.message.chat.id
+    
+    # Serjant o'z tanlovini qildi
+    await call.message.edit_text("✅ Tanlovingiz qabul qilindi. Natijani tongda bilib olasiz...")
+    await call.answer("Ma'lumot olindi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("janob_"))
+async def janob_action_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    
+    # Janob o'z imtiyozini ishlatdi
+    await call.message.edit_text("✅ Imtiyozingiz muvaffaqiyatli faollashtirildi!")
+    await call.answer("Amaliyot bajarildi!", show_alert=True)
 
 # --- WEB SERVER ---
 async def handle(request):
