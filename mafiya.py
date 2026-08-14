@@ -1467,6 +1467,27 @@ async def run_game_loop(chat_id: int, message: types.Message):
                 except Exception:
                     pass
 
+                # Mafiya (Qora Soya) uchun tungi tanlov tugmalari
+        for uid, rname in roles.items():
+            if rname == "Mafiya: Qora Soya":
+                mafiya_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        mafiya_buttons.append([InlineKeyboardButton(text=f"🌑 {target_name}ni nishonga olish", callback_data=f"mafiya_{target_id}")])
+                
+                mafiya_kb = InlineKeyboardMarkup(inline_keyboard=mafiya_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "🌑 **Siz 'Mafiya: Qora Soya' a'zosisiz!**\n"
+                        "Shahar uxlab yotibdi. Tunning haqiqiy hukmdorlari sifatida o'z nishoningizni yo'q qilish vaqti keldi.\n"
+                        "Kimni yo'q qilmoqchisiz?",
+                        reply_markup=mafiya_kb
+                    )
+                except Exception:
+                    pass
+
         # 2. TONG VA KELISHILGAN VOQEALAR JARAYONI
         morning_caption = (
             "🚨 **SHOSHILINCH XABAR!**\n\n"
@@ -1909,6 +1930,16 @@ async def portal_target_callback(call: types.CallbackQuery):
     
     await call.message.edit_text("✅ Makon portal yordamida almashtirildi...")
     await call.answer("Portalchi tanlovi qabul qilindi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("mafiya_"))
+async def mafiya_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("mafiya_", ""))
+    
+    # game_lobbies[chat_id]["night_actions"]["mafiya"] = target_id
+    
+    await call.message.edit_text("✅ Nishon belgilandi. 'Mafiya: Qora Soya' o'z ishini bajarmoqda...")
+    await call.answer("Mafiya tanlovi qabul qilindi!", show_alert=True)
 
 # --- WEB SERVER ---
 async def handle(request):
