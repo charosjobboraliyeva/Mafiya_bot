@@ -793,6 +793,24 @@ async def run_game_loop(chat_id: int, message: types.Message):
                     )
                 except Exception:
                     pass
+                    
+        # Doktor uchun tungi tanlov tugmalarini yaratamiz
+        for uid, rname in roles.items():
+            if rname == "👩‍⚕️ Doktor":
+                heal_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    heal_buttons.append([InlineKeyboardButton(text=f"💉 {target_name}ni davolash", callback_data=f"heal_{target_id}")])
+                
+                heal_kb = InlineKeyboardMarkup(inline_keyboard=heal_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "Siz Doktorsiz! Ushbu tunda kimning hayotini saqlab qolmoqchisiz? Quyidagilardan birini tanlang:",
+                        reply_markup=heal_kb
+                    )
+                except Exception:
+                    pass
 
         # 2. TONG VA KELISHILGAN VOQEALAR JARAYONI
         morning_caption = (
@@ -892,6 +910,15 @@ async def kill_target_callback(call: types.CallbackQuery):
     # Qotil o'z tanlovini qildi
     await call.message.edit_text("✅ Sizning tanlovingiz qabul qilindi. Tong otishini kuting...")
     await call.answer("Qurbon tanlandi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("heal_"))
+async def heal_target_callback(call: types.CallbackQuery):
+    target_id = int(call.data.replace("heal_", ""))
+    chat_id = call.message.chat.id
+    
+    # Doktor o'z tanlovini qildi
+    await call.message.edit_text("✅ Sizning tanlovingiz qabul qilindi. Kimnidir davoladingiz, tong otishini kuting...")
+    await call.answer("Bemor tanlandi!", show_alert=True)
 
 # --- WEB SERVER ---
 async def handle(request):
