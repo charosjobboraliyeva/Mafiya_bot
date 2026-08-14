@@ -1315,6 +1315,86 @@ async def run_game_loop(chat_id: int, message: types.Message):
                 except Exception:
                     pass
 
+                # Savdogar va Diplomat uchun tungi tanlov tugmalari
+        for uid, rname in roles.items():
+            if rname == "💰 Savdogar":
+                savdogar_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        savdogar_buttons.append([InlineKeyboardButton(text=f"💰 {target_name} bilan savdo qilish", callback_data=f"savdogar_{target_id}")])
+                
+                savdogar_kb = InlineKeyboardMarkup(inline_keyboard=savdogar_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "💰 **Siz Savdogarsiz!**\n"
+                        "Siz boylik va resurslarni boshqarasiz. Tunda bir o'yinchi bilan savdo qilib, uning ovozini sotib olishingiz yoki o'zingizga himoya sotib olishingiz mumkin.\n"
+                        "Kim bilan savdo qilmoqchisiz?",
+                        reply_markup=savdogar_kb
+                    )
+                except Exception:
+                    pass
+
+            elif rname == "🤝 Diplomat":
+                diplomat_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        diplomat_buttons.append([InlineKeyboardButton(text=f"🤝 {target_name} bilan ittifoq tuzish", callback_data=f"diplomat_{target_id}")])
+                
+                diplomat_kb = InlineKeyboardMarkup(inline_keyboard=diplomat_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "🤝 **Siz Diplomatsiz!**\n"
+                        "Siz siyosiy kelishuvlar ustasisiz. Tunda bir o'yinchi bilan maxfiy shartnoma tuzib, ertangi kunduzda bir-biringizga qarshi ovoz bermaslikni kafolatlay olasiz.\n"
+                        "Kim bilan shartnoma tuzmoqchisiz?",
+                        reply_markup=diplomat_kb
+                    )
+                except Exception:
+                    pass
+        
+        # Hakker va Gidra uchun tungi tanlov tugmalari
+        for uid, rname in roles.items():
+            if rname == "💻 Hakker":
+                hakker_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        hakker_buttons.append([InlineKeyboardButton(text=f"💻 {target_name}ning telefonini buzish", callback_data=f"hakker_{target_id}")])
+                
+                hakker_kb = InlineKeyboardMarkup(inline_keyboard=hakker_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "💻 **Siz Hakkersiz!**\n"
+                        "Siz raqamli dunyo ustasisiz. Tunda bir o'yinchining telefonini yoki qurilmasini buzib, uning kim bilan aloqa qilganini yoki xabarlarini o'qib chiqishingiz mumkin.\n"
+                        "Kimning ma'lumotlarini buzib kirmoqchisiz?",
+                        reply_markup=hakker_kb
+                    )
+                except Exception:
+                    pass
+
+            elif rname == "🐍 Gidra":
+                gidra_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        gidra_buttons.append([InlineKeyboardButton(text=f"🐍 {target_name}ga zaharli hujum qilish", callback_data=f"gidra_{target_id}")])
+                
+                gidra_kb = InlineKeyboardMarkup(inline_keyboard=gidra_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "🐍 **Siz Gidrasiz!**\n"
+                        "Siz ko'p boshli dahshatli maxluqsiz. Tunda tanlagan o'yinchisiga suiqasd uyushtirib, uni zaharlashingiz mumkin.\n"
+                        "Kimga hujum qilmoqchisiz?",
+                        reply_markup=gidra_kb
+                    )
+                except Exception:
+                    pass
+
         # 2. TONG VA KELISHILGAN VOQEALAR JARAYONI
         morning_caption = (
             "🚨 **SHOSHILINCH XABAR!**\n\n"
@@ -1665,6 +1745,48 @@ async def qorbobobo_target_callback(call: types.CallbackQuery):
     
     await call.message.edit_text("✅ Sehrli qish qalqoni o'rnatildi...")
     await call.answer("Qorbobobo tanlovi qabul qilindi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("savdogar_"))
+async def savdogar_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("savdogar_", ""))
+    
+    # game_lobbies[chat_id]["night_actions"]["savdogar"] = target_id
+    
+    await call.message.edit_text("✅ Savdo bitimi muvaffaqiyatli yakunlandi...")
+    await call.answer("Savdogar tanlovi qabul qilindi!", show_alert=True)
+
+
+@dp.callback_query(F.data.startswith("diplomat_"))
+async def diplomat_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("diplomat_", ""))
+    
+    # game_lobbies[chat_id]["night_actions"]["diplomat"] = target_id
+    
+    await call.message.edit_text("✅ Maxfiy diplomatik shartnoma tuzildi...")
+    await call.answer("Diplomat tanlovi qabul qilindi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("hakker_"))
+async def hakker_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("hakker_", ""))
+    
+    # game_lobbies[chat_id]["night_actions"]["hakker"] = target_id
+    
+    await call.message.edit_text("✅ Tizimga muvaffaqiyatli kirildi. Ma'lumotlar yig'ilmoqda...")
+    await call.answer("Hakker tanlovi qabul qilindi!", show_alert=True)
+
+
+@dp.callback_query(F.data.startswith("gidra_"))
+async def gidra_target_callback(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    target_id = int(call.data.replace("gidra_", ""))
+    
+    # game_lobbies[chat_id]["night_actions"]["gidra"] = target_id
+    
+    await call.message.edit_text("✅ Zaharli nishon belgilandi...")
+    await call.answer("Gidra tanlovi qabul qilindi!", show_alert=True)
 
 # --- WEB SERVER ---
 async def handle(request):
