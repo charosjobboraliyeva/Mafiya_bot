@@ -1016,6 +1016,46 @@ async def run_game_loop(chat_id: int, message: types.Message):
                 except Exception:
                     pass
 
+                # Jurnalist va Sotqin uchun tungi tanlov tugmalari
+        for uid, rname in roles.items():
+            if rname == "📰 Jurnalist":
+                jurnalist_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        jurnalist_buttons.append([InlineKeyboardButton(text=f"📰 {target_name} haqida ma'lumot olish", callback_data=f"jurnalist_{target_id}")])
+                
+                jurnalist_kb = InlineKeyboardMarkup(inline_keyboard=jurnalist_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "📰 **Siz Jurnalistsiz!**\n"
+                        "Sizning vazifangiz — tanlagan o'yinchingizning haqiqiy rolini tekshirib, xalqqa oshkor qilish.\n"
+                        "Kimni tekshirmoqchisiz?",
+                        reply_markup=jurnalist_kb
+                    )
+                except Exception:
+                    pass
+
+            elif rname == "🕵️ Sotqin":
+                sotqin_buttons = []
+                for target_id, target_name in game_lobbies[chat_id]["players"].items():
+                    if target_id != uid:
+                        sotqin_buttons.append([InlineKeyboardButton(text=f"🕵️ {target_name}ga xiyonat qilish", callback_data=f"sotqin_{target_id}")])
+                
+                sotqin_kb = InlineKeyboardMarkup(inline_keyboard=sotqin_buttons)
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "🕵️ **Siz Sotqinsiz!**\n"
+                        "Siz o'z jamoangizni sotib, boshqa tarafga o'tib ketishingiz mumkin.\n"
+                        "Kimga xiyonat qilmoqchisiz?",
+                        reply_markup=sotqin_kb
+                    )
+                except Exception:
+                    pass
+
         # 2. TONG VA KELISHILGAN VOQEALAR JARAYONI
         morning_caption = (
             "🚨 **SHOSHILINCH XABAR!**\n\n"
@@ -1221,6 +1261,19 @@ async def sehrgar_target_callback(call: types.CallbackQuery):
     await call.message.edit_text("✅ Sehr ishlatildi. Natijani tongda bilasiz...")
     await call.answer("Sehrgar tanlovi qabul qilindi!", show_alert=True)
 
+@dp.callback_query(F.data.startswith("jurnalist_"))
+async def jurnalist_target_callback(call: types.CallbackQuery):
+    target_id = int(call.data.replace("jurnalist_", ""))
+    # Bu yerda target_id ning rolini Jurnalistga xabar qiluvchi mantiq bo'ladi
+    await call.message.edit_text("✅ Ma'lumot to'plandi. Tongda qaysi rol ekanligini bilasiz!")
+    await call.answer("Jurnalist tanlovi qabul qilindi!", show_alert=True)
+
+@dp.callback_query(F.data.startswith("sotqin_"))
+async def sotqin_target_callback(call: types.CallbackQuery):
+    target_id = int(call.data.replace("sotqin_", ""))
+    await call.message.edit_text("✅ Xiyonat rejasi qabul qilindi. O'yinni tomosha qiling...")
+    await call.answer("Sotqin tanlovi qabul qilindi!", show_alert=True)
+q
 # --- WEB SERVER ---
 async def handle(request):
     return web.Response(text="Mafia Bot Web Server is running successfully!")
