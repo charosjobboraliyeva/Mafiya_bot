@@ -812,6 +812,30 @@ async def run_game_loop(chat_id: int, message: types.Message):
                 except Exception:
                     pass
 
+                # Serjant uchun tungi xabar
+        for uid, rname in roles.items():
+            if rname == "👮 Serjant":
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "Siz Serjantsiz! Shaharda tartibni saqlashga yordam bering va hushyor turing."
+                    )
+                except Exception:
+                    pass
+
+                # Janob uchun xabar
+        for uid, rname in roles.items():
+            if rname == "🎖 Janob":
+                try:
+                    await bot.send_message(
+                        uid,
+                        "🌙 **Tun qorong'ulashdi...**\n\n"
+                        "Siz Janobsiz! Siz maxsus imtiyozli shahar fuqarosisiz, ehtiyot bo'ling."
+                    )
+                except Exception:
+                    pass
+
         # 2. TONG VA KELISHILGAN VOQEALAR JARAYONI
         morning_caption = (
             "🚨 **SHOSHILINCH XABAR!**\n\n"
@@ -919,6 +943,8 @@ async def heal_target_callback(call: types.CallbackQuery):
     # Doktor o'z tanlovini qildi
     await call.message.edit_text("✅ Sizning tanlovingiz qabul qilindi. Kimnidir davoladingiz, tong otishini kuting...")
     await call.answer("Bemor tanlandi!", show_alert=True)
+
+
 
 # --- WEB SERVER ---
 async def handle(request):
