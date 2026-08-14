@@ -665,10 +665,30 @@ async def start_game_process(message: types.Message):
     user_ids = list(players.keys())
     random.shuffle(user_ids)
     
-    roles = {user_ids[0]: "👑 Bosh Don", user_ids[1]: "👩‍⚕️ Doktor", user_ids[2]: "🎭 Josus"}
-    for i in range(3, len(user_ids)):
-        roles[user_ids[i]] = random.choice(["🔪 Qotil", "🛡 Tansoqchi", "🧛 Vampir", "🤡 Masxaraboz", "❤️ Oshiq", "👨‍💼 Fuqoro"])
+    # Barcha mavjud rollar ro'yxati
+    all_available_roles = [
+        "🔪 Qotil", "👮 Serjant", "🎖 Janob", "🦹 Daydi", "👸 Malika", 
+        "⚖️ Advokat", "🕳 Suidsid", "🤞 Omadli", "🥷 Yollanma qotil", "💣 Afsungar", 
+        "🃏 Aferist", "👺 G'azabkor", "🧙 Sehrgar", "💻 Jurnalist", "🤓 Sotqin", 
+        "🤡 Joker", "👨‍✈️ Admiral", "🧪 Kimyogar", "💰 Rais", "☠️ Minior", 
+        "🏹 Robin Gud", "🦇 Ayg'oqchi", "👷 Konchi", "📸 Fotoparatchi", "⚔️ Qaroqchi", 
+        "👩‍⚕️ Labarant / Hamshira", "⚡ Koldun", "🎅 Qorbobo", "🏬 Savdodar", 
+        "🕊 Diplomat", "👩‍💻 Xakker", "🐉 Gidra", "🤖 Bosh Don / Transformer", 
+        "❤️ Oshiq", "🛡 Tansoqchi", "🎭 Josus", "🤡 Masxaraboz", "🧛 Vampir"
+    ]
+    
+    roles = {}
+    # Har bir o'yinchiga tasodifiy rollardan berib chiqamiz
+    for user_id in user_ids:
+        assigned_role = random.choice(all_available_roles)
+        roles[user_id] = assigned_role
+        
     game_lobbies[chat_id]["roles"] = roles
+
+    await message.answer("🚀 **O'yin avtomatik boshlandi! Barcha yangi rollar taqsimlandi. Tun boshlanmoqda...**")
+    
+    asyncio.create_task(run_game_loop(chat_id, message))
+
 
     # Guruhdagi boshlash xabariga botga o'tish tugmasi
     start_group_kb = InlineKeyboardMarkup(inline_keyboard=[
